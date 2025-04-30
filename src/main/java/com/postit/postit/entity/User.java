@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.OffsetDateTime;
 
@@ -14,6 +17,9 @@ import java.time.OffsetDateTime;
 @Getter
 @Entity
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE user SET deleted_at = now() WHERE id = ?")
+@FilterDef(name = "deletedFilter")
+@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 public class User {
 
     @Id

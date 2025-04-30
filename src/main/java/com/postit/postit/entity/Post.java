@@ -1,10 +1,11 @@
 package com.postit.postit.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.*;
 
 import java.time.OffsetDateTime;
 
@@ -12,6 +13,9 @@ import java.time.OffsetDateTime;
 @Getter
 @Entity
 @Table(name = "posts")
+@SQLDelete(sql = "UPDATE user SET deleted_at = now() WHERE id = ?")
+@FilterDef(name = "deletedFilter")
+@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 public class Post {
 
     @Id
@@ -26,6 +30,7 @@ public class Post {
     @Column(name = "body")
     private String body;
 
+    @ColumnDefault("0")
     @Column(name = "total_views")
     private Integer totalViews;
 
