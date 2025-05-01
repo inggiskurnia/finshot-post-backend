@@ -6,7 +6,9 @@ import com.postit.postit.infrastructure.user.dto.UserDetailResponseDTO;
 import com.postit.postit.infrastructure.user.repository.UserRepository;
 import com.postit.postit.usecase.user.CreateUserUsecase;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CreateUserUsecaseImpl implements CreateUserUsecase {
 
     private final UserRepository userRepository;
