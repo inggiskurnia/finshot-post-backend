@@ -1,4 +1,6 @@
 services:
+
+  # Postgresql
   postgres:
     image: postgres:15
     container_name: postit-db
@@ -14,8 +16,20 @@ services:
     networks:
       - backend
 
+
+  # Redis service
+  redis:
+    image: redis:6-alpine
+    container_name: postit-redis
+    ports:
+      - "6377:6379"
+    volumes:
+      - redis_data:/data
+
+
 volumes:
   pgdata:
+  redis_data:
 
 networks:
   backend:

@@ -22,6 +22,10 @@ public class Claims {
         return (String) getClaimsFromJwt().get("sub");
     }
 
+    public static String getExpirationDateFromJwt(){
+        return (String) getClaimsFromJwt().get("exp").toString();
+    }
+
     public static String getJwtTokenString(){
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
