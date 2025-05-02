@@ -37,6 +37,7 @@ public class TokenGeneratorUsecaseImpl implements TokenGeneratorUsecase {
                 .expiresAt(now.plusSeconds(expiry))
                 .subject(email)
                 .claim("userId", user.getId())
+                .claim("tokenType", "access")
                 .build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -56,6 +57,7 @@ public class TokenGeneratorUsecaseImpl implements TokenGeneratorUsecase {
                 .expiresAt(now.plusSeconds(expiry))
                 .subject(email)
                 .claim("userId", user.getId())
+                .claim("tokenType", "refresh")
                 .build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
