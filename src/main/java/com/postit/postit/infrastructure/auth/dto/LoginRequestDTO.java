@@ -1,7 +1,6 @@
-package com.postit.postit.infrastructure.user.dto;
+package com.postit.postit.infrastructure.auth.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

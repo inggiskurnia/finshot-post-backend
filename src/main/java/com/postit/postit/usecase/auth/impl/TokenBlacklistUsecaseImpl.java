@@ -1,6 +1,6 @@
 package com.postit.postit.usecase.auth.impl;
 
-import com.postit.postit.infrastructure.repository.RedisTokenRepository;
+import com.postit.postit.infrastructure.auth.repository.RedisTokenRepository;
 import com.postit.postit.usecase.auth.TokenBlacklistUsecase;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.time.Instant;
 @Service
 public class TokenBlacklistUsecaseImpl implements TokenBlacklistUsecase {
 
-    private final String REDIS_BLACKLIST_KEY = "posit_blacklist_token";
+    private final String REDIS_BLACKLIST_KEY = "blacklist:";
     private final RedisTokenRepository redisTokenRepository;
 
     public TokenBlacklistUsecaseImpl(RedisTokenRepository redisTokenRepository) {

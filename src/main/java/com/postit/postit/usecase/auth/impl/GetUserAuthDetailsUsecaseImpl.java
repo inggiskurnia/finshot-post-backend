@@ -2,7 +2,7 @@ package com.postit.postit.usecase.auth.impl;
 
 import com.postit.postit.common.exceptions.DataNotFoundException;
 import com.postit.postit.entity.User;
-import com.postit.postit.infrastructure.user.dto.UserAuth;
+import com.postit.postit.infrastructure.auth.dto.UserAuth;
 import com.postit.postit.infrastructure.user.repository.UserRepository;
 import com.postit.postit.usecase.auth.GetUserAuthDetailsUsecase;
 import org.springframework.security.core.userdetails.UserDetails;

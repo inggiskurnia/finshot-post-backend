@@ -1,4 +1,4 @@
-package com.postit.postit.infrastructure.user.dto;
+package com.postit.postit.infrastructure.auth.dto;
 
 import com.postit.postit.entity.User;
 import lombok.AllArgsConstructor;

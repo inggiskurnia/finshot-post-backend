@@ -1,8 +1,8 @@
 package com.postit.postit.usecase.auth.impl;
 
 import com.postit.postit.common.exceptions.DataNotFoundException;
-import com.postit.postit.infrastructure.user.dto.LoginRequestDTO;
-import com.postit.postit.infrastructure.user.dto.LoginResponseDTO;
+import com.postit.postit.infrastructure.auth.dto.LoginRequestDTO;
+import com.postit.postit.infrastructure.auth.dto.LoginResponseDTO;
 import com.postit.postit.usecase.auth.LoginUsecase;
 import com.postit.postit.usecase.auth.TokenGeneratorUsecase;
 import org.springframework.security.authentication.AuthenticationManager;

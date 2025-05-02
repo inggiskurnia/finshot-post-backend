@@ -1,4 +1,4 @@
-package com.postit.postit.infrastructure.repository;
+package com.postit.postit.infrastructure.auth.repository;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;

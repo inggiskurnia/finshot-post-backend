@@ -6,7 +6,9 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.postit.postit.infrastructure.security.filters.TokenBlacklist;
 import com.postit.postit.usecase.auth.GetUserAuthDetailsUsecase;
+import com.postit.postit.usecase.auth.TokenBlacklistUsecase;
 import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +21,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -33,11 +33,15 @@ public class SecurityConfig {
     private final GetUserAuthDetailsUsecase getUserAuthDetailsUsecase;
     private final PasswordEncoder passwordEncoder;
     private final RsaKeyConfigProperties rsaKeyConfigProperties;
+    private final TokenBlacklistUsecase tokenBlacklistUsecase;
+    private final TokenBlacklist tokenBlacklistFilter;
 
-    public SecurityConfig(GetUserAuthDetailsUsecase getUserAuthDetailsUsecase, PasswordEncoder passwordEncoder, RsaKeyConfigProperties rsaKeyConfigProperties) {
+    public SecurityConfig(GetUserAuthDetailsUsecase getUserAuthDetailsUsecase, PasswordEncoder passwordEncoder, RsaKeyConfigProperties rsaKeyConfigProperties, TokenBlacklistUsecase tokenBlacklistUsecase, TokenBlacklist tokenBlacklistFilter) {
         this.getUserAuthDetailsUsecase = getUserAuthDetailsUsecase;
         this.passwordEncoder = passwordEncoder;
         this.rsaKeyConfigProperties = rsaKeyConfigProperties;
+        this.tokenBlacklistUsecase = tokenBlacklistUsecase;
+        this.tokenBlacklistFilter = tokenBlacklistFilter;
     }
 
     @Bean
@@ -60,6 +64,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(tokenBlacklistFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> jwt.decoder(jwtDecoder()));
 
@@ -86,7 +91,17 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder(){
-        return NimbusJwtDecoder.withPublicKey(rsaKeyConfigProperties.publicKey()).build();
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(rsaKeyConfigProperties.publicKey()).build();
+        
+        return new JwtDecoder() {
+            @Override
+            public Jwt decode(String token) throws JwtException {
+                if (tokenBlacklistUsecase.isTokenBlacklisted(token)) {
+                    throw new JwtException("Token has been blacklisted");
+                }
+                return decoder.decode(token);
+            }
+        };
     }
 
     @Bean

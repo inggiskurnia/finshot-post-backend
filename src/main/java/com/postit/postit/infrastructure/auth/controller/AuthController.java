@@ -1,11 +1,10 @@
-package com.postit.postit.infrastructure.user.controller;
+package com.postit.postit.infrastructure.auth.controller;
 
 import com.postit.postit.common.response.ApiResponse;
-import com.postit.postit.infrastructure.security.Claims;
-import com.postit.postit.infrastructure.user.dto.LoginRequestDTO;
+import com.postit.postit.infrastructure.auth.dto.LoginRequestDTO;
+import com.postit.postit.infrastructure.auth.dto.LogoutRequestDTO;
 import com.postit.postit.usecase.auth.LoginUsecase;
 import com.postit.postit.usecase.auth.LogoutUsecase;
-import com.postit.postit.usecase.auth.TokenBlacklistUsecase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +27,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@RequestBody String refreshToken){
-        logoutUsecase.logoutUser(refreshToken);
+    public ResponseEntity<?> logoutUser(@RequestBody LogoutRequestDTO req){
+        logoutUsecase.logoutUser(req);
         return ApiResponse.successResponse(HttpStatus.OK.value(), "Logout success", null);
     }
 }

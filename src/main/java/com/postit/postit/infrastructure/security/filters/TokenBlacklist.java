@@ -40,9 +40,9 @@ public class TokenBlacklist extends OncePerRequestFilter {
             }
         }
 
-        var header = request.getHeader("Authorization");
-        if (header != null){
-            return header.replace("Bearer", "");
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")){
+            return header.substring(7); // Remove "Bearer " prefix
         }
 
         return null;
