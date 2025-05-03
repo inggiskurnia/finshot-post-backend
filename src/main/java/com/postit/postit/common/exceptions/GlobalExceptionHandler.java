@@ -13,4 +13,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleDataNotFoundException(DataNotFoundException ex){
         return ApiResponse.failedResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
     }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<?> handleDuplicateEmailException(DuplicateEmailException ex){
+        return ApiResponse.failedResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(DuplicatePostException.class)
+    public ResponseEntity<?> handleDuplicatePostException(DuplicatePostException ex){
+        return ApiResponse.failedResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+    }
 }

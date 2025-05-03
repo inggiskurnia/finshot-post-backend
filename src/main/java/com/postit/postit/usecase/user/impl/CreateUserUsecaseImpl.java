@@ -1,5 +1,6 @@
 package com.postit.postit.usecase.user.impl;
 
+import com.postit.postit.common.exceptions.DuplicateEmailException;
 import com.postit.postit.entity.User;
 import com.postit.postit.infrastructure.user.dto.CreateUserRequestDTO;
 import com.postit.postit.infrastructure.user.dto.UserDetailResponseDTO;
@@ -21,6 +22,8 @@ public class CreateUserUsecaseImpl implements CreateUserUsecase {
 
     @Override
     public UserDetailResponseDTO createUser(CreateUserRequestDTO req) {
+
+        userRepository.findByEmailContainsIgnoreCase(req.getEmail()).orElseThrow(()-> new DuplicateEmailException("Duplicate email"));
 
         User newUser = req.toEntity();
         newUser.setPassword(passwordEncoder.encode(req.getPassword()));

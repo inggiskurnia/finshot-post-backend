@@ -17,7 +17,7 @@ import java.time.OffsetDateTime;
 @Getter
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE user SET deleted_at = now() WHERE id = ?")
+@SQLDelete(sql = "UPDATE users SET deleted_at = now() WHERE id = ?")
 @FilterDef(name = "deletedUserFilter")
 @Filter(name = "deletedUserFilter", condition = "deleted_at IS NULL")
 public class User {

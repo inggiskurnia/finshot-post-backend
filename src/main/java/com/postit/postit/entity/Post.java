@@ -3,6 +3,7 @@ package com.postit.postit.entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.*;
@@ -13,7 +14,7 @@ import java.time.OffsetDateTime;
 @Getter
 @Entity
 @Table(name = "posts")
-@SQLDelete(sql = "UPDATE user SET deleted_at = now() WHERE id = ?")
+@SQLDelete(sql = "UPDATE posts SET deleted_at = now() WHERE id = ?")
 @FilterDef(name = "deletedPostFilter")
 @Filter(name = "deletedPostFilter", condition = "deleted_at IS NULL")
 public class Post {
@@ -23,7 +24,7 @@ public class Post {
     @SequenceGenerator(name = "posts_id_gen", sequenceName = "posts_id_seq", allocationSize = 1)
     private Long id;
 
-    @Max(255)
+    @Size(max = 100)
     @Column(name = "title")
     private String title;
 
