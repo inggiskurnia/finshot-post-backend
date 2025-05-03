@@ -27,10 +27,11 @@ public class TokenBlacklist extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
         filterChain.doFilter(request, response);
     }
 
-    private String extractTokenFromRequest(HttpServletRequest request){
+    private static String extractTokenFromRequest(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
         if(cookies != null){
             for (Cookie cookie : cookies){
@@ -42,7 +43,7 @@ public class TokenBlacklist extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")){
-            return header.substring(7); // Remove "Bearer " prefix
+            return header.substring(7);
         }
 
         return null;

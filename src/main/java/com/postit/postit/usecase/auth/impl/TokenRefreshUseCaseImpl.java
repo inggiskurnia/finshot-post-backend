@@ -4,6 +4,7 @@ import com.postit.postit.common.exceptions.DataNotFoundException;
 import com.postit.postit.common.exceptions.JwtParsingException;
 import com.postit.postit.entity.User;
 import com.postit.postit.infrastructure.auth.dto.LoginResponseDTO;
+import com.postit.postit.infrastructure.auth.dto.RefreshTokenRequestDTO;
 import com.postit.postit.infrastructure.user.repository.UserRepository;
 import com.postit.postit.usecase.auth.TokenRefreshUsecase;
 import org.springframework.security.oauth2.jwt.*;
@@ -25,12 +26,21 @@ public class TokenRefreshUseCaseImpl implements TokenRefreshUsecase {
     }
 
     @Override
-    public LoginResponseDTO tokenRefresh(String refreshToken) {
+    public LoginResponseDTO tokenRefresh(RefreshTokenRequestDTO req) {
+
+
+
         try {
             Instant now = Instant.now();
             long expiry = 600L;
 
-            Jwt decodedJwt = jwtDecoder.decode(refreshToken);
+            Jwt decodedJwt = jwtDecoder.decode(req.getRefreshToken());
+
+            String tokenType = decodedJwt.getClaimAsString("tokenType");
+            if (tokenType == null || !tokenType.equals("refresh")){
+                throw new JwtException("Invalid token type");
+            }
+
             String email = decodedJwt.getSubject();
             User user = userRepository.findByEmailContainsIgnoreCase(email).orElseThrow(()-> new DataNotFoundException("User with email " + email + " not found !"));
 
@@ -44,7 +54,7 @@ public class TokenRefreshUseCaseImpl implements TokenRefreshUsecase {
 
             String newAccessToken = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-            return new LoginResponseDTO(email, newAccessToken, refreshToken);
+            return new LoginResponseDTO(email, newAccessToken, req.getRefreshToken());
 
         }
         catch (JwtException e){

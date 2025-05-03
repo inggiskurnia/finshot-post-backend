@@ -35,6 +35,11 @@ public class Claims {
         return jwt.getTokenValue();
     }
 
+    public static String getTokenTypeFromJwt() {
+        Object claim = getClaimsFromJwt().get("tokenType");
+        return claim != null ? claim.toString() : null;
+    }
+
     public static Long getUserIdFromJwt(){
         Object userId = getClaimsFromJwt().get("userId");
         if (userId instanceof Integer){

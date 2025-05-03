@@ -3,6 +3,8 @@ package com.postit.postit.infrastructure.auth.controller;
 import com.postit.postit.common.response.ApiResponse;
 import com.postit.postit.infrastructure.auth.dto.LoginRequestDTO;
 import com.postit.postit.infrastructure.auth.dto.LogoutRequestDTO;
+import com.postit.postit.infrastructure.auth.dto.RefreshTokenRequestDTO;
+import com.postit.postit.infrastructure.security.Claims;
 import com.postit.postit.usecase.auth.LoginUsecase;
 import com.postit.postit.usecase.auth.LogoutUsecase;
 import com.postit.postit.usecase.auth.TokenRefreshUsecase;
@@ -36,12 +38,8 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String refreshToken ){
-        if (refreshToken == null || !refreshToken.startsWith("Bearer ")) {
-            return ApiResponse.failedResponse("Invalid token format");
-        }
-        String extractedRefreshToken = refreshToken.substring(7);
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequestDTO req){
 
-        return ApiResponse.successResponse(HttpStatus.OK.value(), "Refresh token success !", tokenRefreshUsecase.tokenRefresh(extractedRefreshToken));
+        return ApiResponse.successResponse(HttpStatus.OK.value(), "Refresh token success !", tokenRefreshUsecase.tokenRefresh(req));
     }
 }
