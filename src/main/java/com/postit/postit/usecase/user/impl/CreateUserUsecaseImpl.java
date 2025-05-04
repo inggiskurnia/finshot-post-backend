@@ -9,6 +9,8 @@ import com.postit.postit.usecase.user.CreateUserUsecase;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CreateUserUsecaseImpl implements CreateUserUsecase {
 
@@ -23,7 +25,11 @@ public class CreateUserUsecaseImpl implements CreateUserUsecase {
     @Override
     public UserDetailResponseDTO createUser(CreateUserRequestDTO req) {
 
-        userRepository.findByEmailContainsIgnoreCase(req.getEmail()).orElseThrow(()-> new DuplicateEmailException("Duplicate email"));
+        Optional<User> userOptional = userRepository.findByEmailIgnoreCase(req.getEmail());
+
+        if (userOptional.isPresent()){
+           throw new DuplicateEmailException("Duplicate email");
+        }
 
         User newUser = req.toEntity();
         newUser.setPassword(passwordEncoder.encode(req.getPassword()));

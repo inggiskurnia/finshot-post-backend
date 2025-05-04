@@ -42,7 +42,7 @@ public class TokenRefreshUseCaseImpl implements TokenRefreshUsecase {
             }
 
             String email = decodedJwt.getSubject();
-            User user = userRepository.findByEmailContainsIgnoreCase(email).orElseThrow(()-> new DataNotFoundException("User with email " + email + " not found !"));
+            User user = userRepository.findByEmailIgnoreCase(email).orElseThrow(()-> new DataNotFoundException("User with email " + email + " not found !"));
 
             JwtClaimsSet claims = JwtClaimsSet.builder()
                     .issuer("self")

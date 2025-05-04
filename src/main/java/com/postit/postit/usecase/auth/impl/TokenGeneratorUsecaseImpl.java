@@ -29,7 +29,7 @@ public class TokenGeneratorUsecaseImpl implements TokenGeneratorUsecase {
         long expiry = 600L;
 
         String email = authentication.getName();
-        User user = userRepository.findByEmailContainsIgnoreCase(email).orElseThrow(()-> new DataNotFoundException("User with email " + email + " not found !"));
+        User user = userRepository.findByEmailIgnoreCase(email).orElseThrow(()-> new DataNotFoundException("User with email " + email + " not found !"));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
@@ -49,7 +49,7 @@ public class TokenGeneratorUsecaseImpl implements TokenGeneratorUsecase {
         long expiry = 86400L;
 
         String email = authentication.getName();
-        User user = userRepository.findByEmailContainsIgnoreCase(email).orElseThrow(()-> new DataNotFoundException("User with email " + email + " not found !"));
+        User user = userRepository.findByEmailIgnoreCase(email).orElseThrow(()-> new DataNotFoundException("User with email " + email + " not found !"));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")

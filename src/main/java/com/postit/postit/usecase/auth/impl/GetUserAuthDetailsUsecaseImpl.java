@@ -20,7 +20,7 @@ public class GetUserAuthDetailsUsecaseImpl implements GetUserAuthDetailsUsecase 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User existingUser = userRepository.findByEmailContainsIgnoreCase(username)
+        User existingUser = userRepository.findByEmailIgnoreCase(username)
                 .orElseThrow(()-> new DataNotFoundException("Username with email "+ username + " not found !"));
 
         UserAuth userAuth = new UserAuth();
