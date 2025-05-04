@@ -1,4 +1,4 @@
-package com.postit.postit.infrastructure.user.dto;
+package com.postit.postit.infrastructure.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,4 +11,5 @@ public class LoginResponseDTO {
 
     private String email;
     private String accessToken;
+    private String refreshToken;
 }

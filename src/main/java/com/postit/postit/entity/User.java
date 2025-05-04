@@ -17,14 +17,14 @@ import java.time.OffsetDateTime;
 @Getter
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE user SET deleted_at = now() WHERE id = ?")
-@FilterDef(name = "deletedFilter")
-@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE users SET deleted_at = now() WHERE id = ?")
+@FilterDef(name = "deletedUserFilter")
+@Filter(name = "deletedUserFilter", condition = "deleted_at IS NULL")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_gen")
-    @SequenceGenerator(name = "users_id_gen", sequenceName = "users_id_gen")
+    @SequenceGenerator(name = "users_id_gen", sequenceName = "users_id_seq", allocationSize = 1)
     private Long id;
 
     @Size(max = 255)
@@ -36,7 +36,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Min(8)
+    @Size(min = 8)
     @Column(name = "password")
     private String password;
 

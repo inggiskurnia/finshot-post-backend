@@ -1,10 +1,10 @@
 package com.postit.postit.usecase.auth.impl;
 
 import com.postit.postit.common.exceptions.DataNotFoundException;
-import com.postit.postit.infrastructure.security.TokenService;
-import com.postit.postit.infrastructure.user.dto.LoginRequestDTO;
-import com.postit.postit.infrastructure.user.dto.LoginResponseDTO;
-import com.postit.postit.usecase.auth.LoginUseCase;
+import com.postit.postit.infrastructure.auth.dto.LoginRequestDTO;
+import com.postit.postit.infrastructure.auth.dto.LoginResponseDTO;
+import com.postit.postit.usecase.auth.LoginUsecase;
+import com.postit.postit.usecase.auth.TokenGeneratorUsecase;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,22 +12,24 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginUsecaseImpl implements LoginUseCase {
+public class LoginUsecaseImpl implements LoginUsecase {
 
     private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService;
+    private final TokenGeneratorUsecase tokenGeneratorUsecase;
 
-    public LoginUsecaseImpl(AuthenticationManager authenticationManager, TokenService tokenService) {
+    public LoginUsecaseImpl(AuthenticationManager authenticationManager, TokenGeneratorUsecase tokenGeneratorUsecase) {
         this.authenticationManager = authenticationManager;
-        this.tokenService = tokenService;
+        this.tokenGeneratorUsecase = tokenGeneratorUsecase;
     }
 
     @Override
     public LoginResponseDTO authenticateUser(LoginRequestDTO req) {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
-            String token = tokenService.generateToken(authentication);
-            return new LoginResponseDTO(req.getEmail(), token);
+            String accessToken = tokenGeneratorUsecase.generateAccessToken(authentication);
+            String refreshToken = tokenGeneratorUsecase.generateRefreshToken(authentication);
+
+            return new LoginResponseDTO(req.getEmail(), accessToken, refreshToken);
         }
         catch (AuthenticationException e){
             throw new DataNotFoundException("Wrong credentials");

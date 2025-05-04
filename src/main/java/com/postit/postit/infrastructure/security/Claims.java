@@ -22,6 +22,10 @@ public class Claims {
         return (String) getClaimsFromJwt().get("sub");
     }
 
+    public static String getExpirationDateFromJwt(){
+        return (String) getClaimsFromJwt().get("exp").toString();
+    }
+
     public static String getJwtTokenString(){
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
@@ -29,6 +33,11 @@ public class Claims {
             throw new IllegalStateException("JWT not found in security context");
         }
         return jwt.getTokenValue();
+    }
+
+    public static String getTokenTypeFromJwt() {
+        Object claim = getClaimsFromJwt().get("tokenType");
+        return claim != null ? claim.toString() : null;
     }
 
     public static Long getUserIdFromJwt(){

@@ -2,7 +2,7 @@ package com.postit.postit.usecase.auth.impl;
 
 import com.postit.postit.common.exceptions.DataNotFoundException;
 import com.postit.postit.entity.User;
-import com.postit.postit.infrastructure.user.dto.UserAuth;
+import com.postit.postit.infrastructure.auth.dto.UserAuth;
 import com.postit.postit.infrastructure.user.repository.UserRepository;
 import com.postit.postit.usecase.auth.GetUserAuthDetailsUsecase;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +20,7 @@ public class GetUserAuthDetailsUsecaseImpl implements GetUserAuthDetailsUsecase 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User existingUser = userRepository.findByEmailContainsIgnoreCase(username)
+        User existingUser = userRepository.findByEmailIgnoreCase(username)
                 .orElseThrow(()-> new DataNotFoundException("Username with email "+ username + " not found !"));
 
         UserAuth userAuth = new UserAuth();

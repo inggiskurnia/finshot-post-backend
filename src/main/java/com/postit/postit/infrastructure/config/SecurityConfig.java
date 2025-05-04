@@ -1,13 +1,5 @@
 package com.postit.postit.infrastructure.config;
 
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
-import com.postit.postit.usecase.auth.GetUserAuthDetailsUsecase;
-import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +16,18 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.postit.postit.infrastructure.security.filters.TokenBlacklist;
+import com.postit.postit.usecase.auth.GetUserAuthDetailsUsecase;
+
+import jakarta.servlet.http.Cookie;
 
 @Configuration
 @EnableWebSecurity
@@ -33,11 +37,13 @@ public class SecurityConfig {
     private final GetUserAuthDetailsUsecase getUserAuthDetailsUsecase;
     private final PasswordEncoder passwordEncoder;
     private final RsaKeyConfigProperties rsaKeyConfigProperties;
+    private final TokenBlacklist tokenBlacklistFilter;
 
-    public SecurityConfig(GetUserAuthDetailsUsecase getUserAuthDetailsUsecase, PasswordEncoder passwordEncoder, RsaKeyConfigProperties rsaKeyConfigProperties) {
+    public SecurityConfig(GetUserAuthDetailsUsecase getUserAuthDetailsUsecase, PasswordEncoder passwordEncoder, RsaKeyConfigProperties rsaKeyConfigProperties, TokenBlacklist tokenBlacklistFilter) {
         this.getUserAuthDetailsUsecase = getUserAuthDetailsUsecase;
         this.passwordEncoder = passwordEncoder;
         this.rsaKeyConfigProperties = rsaKeyConfigProperties;
+        this.tokenBlacklistFilter = tokenBlacklistFilter;
     }
 
     @Bean
@@ -52,14 +58,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(new CorsConfigurationSourceImpl()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("api/v1/posts/*").permitAll()
                         .requestMatchers("api/v1/users/register").permitAll()
-                        .requestMatchers("api/v1/users/login").permitAll()
+                        .requestMatchers("api/v1/auth/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(tokenBlacklistFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2ResourceServer(oauth2 -> {
                     oauth2.jwt(jwt -> jwt.decoder(jwtDecoder()));
 
