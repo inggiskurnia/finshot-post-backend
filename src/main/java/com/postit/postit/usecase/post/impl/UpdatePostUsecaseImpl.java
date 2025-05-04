@@ -47,7 +47,7 @@ public class UpdatePostUsecaseImpl implements UpdatePostUsecase {
         User user = userRepository.findById(userId).orElseThrow(()-> new DataNotFoundException("User not found !"));
         String title = SlugDecoder.decode(slug);
 
-        Post existingPost = postRepository.findByAuthorIdAndTitleIgnoreCase(userId, title).orElseThrow(()-> new DataNotFoundException("Post not found !"));
+        Post existingPost = postRepository.findByTitleIgnoreCase(title).orElseThrow(()-> new DataNotFoundException("Post not found !"));
 
         existingPost.setTotalViews(existingPost.getTotalViews() + 1);
         postRepository.save(existingPost);

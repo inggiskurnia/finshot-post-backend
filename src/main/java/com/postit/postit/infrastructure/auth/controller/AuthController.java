@@ -37,7 +37,7 @@ public class AuthController {
         return ApiResponse.successResponse(HttpStatus.OK.value(), "Logout success", null);
     }
 
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequestDTO req){
 
         return ApiResponse.successResponse(HttpStatus.OK.value(), "Refresh token success !", tokenRefreshUsecase.tokenRefresh(req));

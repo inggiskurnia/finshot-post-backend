@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,6 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         )
         FROM Post p
         WHERE p.author.id = :userId
+        AND p.deletedAt IS NULL
         ORDER BY p.createdAt DESC
     """)
     Page<PostResponseDTO> findPaginatedByUserId(@Param("userId") Long userId, Pageable pageable);
@@ -47,6 +47,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                     p.updatedAt
                 )
                 FROM Post p
+                WHERE p.deletedAt IS NULL
                 ORDER BY p.createdAt DESC
             """)
     Page<PostResponseDTO> findPaginatedAllPost(Pageable pageable);
